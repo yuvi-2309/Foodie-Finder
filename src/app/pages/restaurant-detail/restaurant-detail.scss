@@ -1,0 +1,353 @@
+.restaurant-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.restaurant-header {
+  margin-bottom: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.header-image {
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.header-content {
+  padding: 32px;
+  background: white;
+  
+  .title-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    
+    h1 {
+      margin: 0;
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a237e;
+    }
+  }
+  
+  .price-badge {
+    background: #e8eaf6;
+    color: #3f51b5;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  
+  .description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #666;
+    margin: 16px 0 0 0;
+  }
+}
+
+.cuisine-chip {
+  margin-bottom: 16px;
+  
+  mat-chip {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+    font-weight: 500;
+    font-size: 16px;
+  }
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  
+  .stars {
+    display: flex;
+    gap: 4px;
+    
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: #e0e0e0;
+      
+      &.filled {
+        color: #ffc107;
+      }
+    }
+  }
+  
+  .rating-text {
+    color: #666;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.info-card {
+  margin-bottom: 32px;
+  
+  mat-card-content {
+    padding: 24px;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  display: flex;
+  gap: 16px;
+  
+  mat-icon {
+    color: #3f51b5;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+  
+  strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #1a237e;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+  }
+  
+  a {
+    color: #3f51b5;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.reviews-section {
+  margin-top: 48px;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a237e;
+  }
+  
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 60px 20px;
+  
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+  }
+  
+  h3 {
+    margin: 16px 0 8px;
+    color: #666;
+  }
+  
+  p {
+    color: #999;
+  }
+}
+
+.reviews-list {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-card {
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+}
+
+.review-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e8eaf6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #3f51b5;
+    }
+  }
+  
+  strong {
+    display: block;
+    font-size: 16px;
+    color: #1a237e;
+  }
+  
+  .review-date {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #999;
+  }
+}
+
+.stars.small {
+  display: flex;
+  gap: 2px;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #e0e0e0;
+    
+    &.filled {
+      color: #ffc107;
+    }
+  }
+}
+
+.review-content {
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a237e;
+  }
+  
+  .review-content {
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 12px 0;
+  }
+  
+  .visit-date {
+    margin: 0;
+    font-size: 14px;
+    color: #999;
+    font-style: italic;
+  }
+}
+
+mat-card-actions {
+  padding: 8px 16px;
+  
+  button {
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 4px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header-image {
+    height: 250px;
+  }
+  
+  .header-content {
+    padding: 20px;
+    
+    .title-section {
+      flex-direction: column;
+      align-items: flex-start;
+      
+      h1 {
+        font-size: 28px;
+      }
+    }
+  }
+  
+  .reviews-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

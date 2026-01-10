@@ -1,0 +1,73 @@
+<div class="restaurant-list-container">
+  <div class="header">
+    <h1>Discover Amazing Restaurants</h1>
+    <p>Explore community-reviewed restaurants and share your dining experiences</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading restaurants...</p>
+    </div>
+  } @else {
+    <div class="restaurants-grid">
+      @for (restaurant of restaurants(); track restaurant.id) {
+        <mat-card class="restaurant-card" (click)="viewRestaurant(restaurant.id)">
+          <div class="restaurant-image" [style.background-image]="'url(' + (restaurant.imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800') + ')'">
+            @if (restaurant.priceRange) {
+              <div class="price-badge">{{ getPriceRange(restaurant.priceRange) }}</div>
+            }
+          </div>
+          
+          <mat-card-content>
+            <h2>{{ restaurant.name }}</h2>
+            @if (restaurant.cuisine) {
+              <mat-chip-set class="cuisine-chip">
+                <mat-chip>{{ restaurant.cuisine }}</mat-chip>
+              </mat-chip-set>
+            }
+            
+            @if (restaurant.description) {
+              <p class="description">{{ restaurant.description }}</p>
+            }
+            
+            <div class="rating-section">
+              @if (restaurant.totalReviews && restaurant.totalReviews > 0) {
+                <div class="stars">
+                  @for (star of getStarArray(restaurant.averageRating || 0); track $index) {
+                    <mat-icon [class.filled]="star === 1">star</mat-icon>
+                  }
+                </div>
+                <span class="rating-text">
+                  {{ restaurant.averageRating || 0 | number: '1.1-1' }} ({{ restaurant.totalReviews }} reviews)
+                </span>
+              } @else {
+                <span class="no-reviews">No reviews yet</span>
+              }
+            </div>
+            
+            <div class="address">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ restaurant.address || restaurant.location || 'Location not available' }}</span>
+            </div>
+          </mat-card-content>
+          
+          <mat-card-actions>
+            <button mat-button color="primary">
+              View Details
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+    
+    @if (restaurants().length === 0) {
+      <div class="empty-state">
+        <mat-icon>restaurant</mat-icon>
+        <h2>No restaurants found</h2>
+        <p>Check back later for new listings</p>
+      </div>
+    }
+  }
+</div>

@@ -1,59 +1,118 @@
-# FoodieFinder
+# FoodieFinder - Restaurant Review Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
+A modern, community-driven Angular application for restaurant reviews and ratings built with Angular 20 and Angular Material, integrated with a real backend API.
 
-## Development server
+## Sprint 1 Features (COMPLETED ✅)
 
-To start a local development server, run:
+### 1. User Registration & Authentication
+- Complete registration and login system with backend API
+- JWT token-based authentication
+- Form validation with error handling
+- Session persistence using localStorage
+- Route guards for protected pages
+- Responsive auth pages with gradient backgrounds
+- Automatic token refresh on app initialization
 
+### 2. Review Posting System
+- Interactive 5-star rating system
+- Rich text review forms
+- Real-time review submission to backend API
+- Review display with user information
+- Review management (create, update, delete)
+
+### 3. Rating System
+- Visual star displays on restaurant cards
+- Average rating calculation from reviews
+- Total review count
+- Automatic updates when reviews are posted
+
+### 4. Restaurant Browsing
+- Grid layout of restaurant cards
+- Restaurant details pages from backend API
+- Location information
+- Contact information
+- Real-time data from FoodieFinder backend
+
+## API Integration (COMPLETED ✅)
+
+The application is now fully integrated with the backend API at:
+**https://foodiefinder-backend-8ybs.onrender.com**
+
+### Authentication Endpoints
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login  
+- `GET /auth/me` - Get authenticated user details
+
+### Restaurant Endpoints
+- `GET /restaurants/` - List all restaurants
+- `GET /restaurants/:id` - Get restaurant details with reviews
+
+### Review Endpoints
+- `POST /reviews/` - Create review (requires authentication)
+- `PUT /reviews/:id` - Update review (requires authentication)
+- `DELETE /reviews/:id` - Delete review (requires authentication)
+
+For detailed API integration information, see [API_INTEGRATION.md](./API_INTEGRATION.md)
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+- Angular CLI 20+
+
+### Start Development Server
 ```bash
-ng serve
+npm install
+npm start
+# or
+ng serve --ssl=false
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to http://localhost:4200/
 
-## Code scaffolding
+### First Time Usage
+1. Click "Sign Up" and create an account (connects to real backend)
+2. Browse restaurants on the home page (loaded from API)
+3. Click any restaurant to view details
+4. Click "Write a Review" to post a review (saved to backend)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+5. Rate and review restaurants
 
-```bash
-ng generate component component-name
+## Technologies
+
+- Angular 20.3 with standalone components
+- Angular Material (Azure Blue theme)
+- TypeScript & SCSS
+- RxJS & Angular Signals
+- Reactive Forms
+
+## Project Structure
+```
+src/app/
+├── core/
+│   ├── guards/        # Auth guards
+│   ├── models/        # Data models
+│   └── services/      # Business logic
+├── auth/              # Login/Register
+├── pages/             # Restaurant pages
+└── shared/
+    └── components/    # Navbar, ReviewForm
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Features
 
-```bash
-ng generate --help
-```
+✅ User registration with validation
+✅ Secure login/logout
+✅ Restaurant listing with ratings
+✅ Detailed restaurant pages
+✅ Interactive review posting
+✅ 5-star rating system
+✅ Responsive design
+✅ LocalStorage persistence
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Sprint 2 (Upcoming)
+- Search and filter restaurants
+- Photo uploads
+- Recommendation engine
+- User profiles
+- Favorite restaurants

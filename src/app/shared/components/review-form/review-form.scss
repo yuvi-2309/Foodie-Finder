@@ -1,0 +1,69 @@
+.review-form-card {
+  margin-bottom: 32px;
+  
+  mat-card-header {
+    margin-bottom: 24px;
+  }
+}
+
+.rating-input {
+  margin-bottom: 24px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+  }
+  
+  .stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s;
+      
+      &:hover {
+        transform: scale(1.1);
+        color: #ffc107;
+      }
+      
+      &.selected {
+        color: #ffc107;
+      }
+    }
+  }
+  
+  .rating-hint {
+    color: #999;
+    font-size: 14px;
+  }
+  
+  .rating-selected {
+    color: #ffc107;
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  
+  button {
+    min-width: 150px;
+    height: 44px;
+  }
+}

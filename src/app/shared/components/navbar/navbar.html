@@ -1,0 +1,43 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="navbar-content">
+    <div class="brand" (click)="navigateToHome()">
+      <mat-icon>restaurant_menu</mat-icon>
+      <span>FoodieFinder</span>
+    </div>
+
+    <div class="nav-actions">
+      @if (authService.isAuthenticated()) {
+        <button mat-button routerLink="/restaurants">
+          <mat-icon>explore</mat-icon>
+          <span>Restaurants</span>
+        </button>
+        
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="user-menu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        
+        <mat-menu #menu="matMenu">
+          <div class="user-info">
+            @if (authService.currentUser()?.displayName) {
+              <strong>{{ authService.currentUser()?.displayName }}</strong>
+            }
+            <span>{{ authService.currentUser()?.email }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      } @else {
+        <button mat-button routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+        <button mat-raised-button routerLink="/register" class="register-button">
+          <span>Sign Up</span>
+        </button>
+      }
+    </div>
+  </div>
+</mat-toolbar>
