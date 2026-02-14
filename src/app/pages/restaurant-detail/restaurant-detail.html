@@ -1,7 +1,7 @@
 <div class="restaurant-detail-container">
   @if (isLoading()) {
     <div class="loading-container">
-      <mat-spinner></mat-spinner>
+      <mat-spinner diameter="48"></mat-spinner>
       <p>Loading restaurant details...</p>
     </div>
   } @else if (restaurant()) {
@@ -10,8 +10,10 @@
     </button>
 
     <div class="restaurant-header">
-      <div class="header-image" [style.background-image]="'url(' + (restaurant()!.imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800') + ')'"></div>
-      
+      <div class="header-image" [style.background-image]="'url(' + (restaurant()!.imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800') + ')'">
+        <div class="header-gradient"></div>
+      </div>
+
       <div class="header-content">
         <div class="title-section">
           <h1>{{ restaurant()!.name }}</h1>
@@ -19,26 +21,29 @@
             <div class="price-badge">{{ getPriceRange(restaurant()!.priceRange!) }}</div>
           }
         </div>
-        
+
         @if (restaurant()!.cuisine) {
           <mat-chip-set class="cuisine-chip">
             <mat-chip>{{ restaurant()!.cuisine }}</mat-chip>
           </mat-chip-set>
         }
-        
+
         @if (restaurant()!.totalReviews !== undefined && restaurant()!.totalReviews! > 0) {
           <div class="rating-section">
-            <div class="stars">
-              @for (star of getStarArray(restaurant()!.averageRating || 0); track $index) {
-                <mat-icon [class.filled]="star === 1">star</mat-icon>
-              }
+            <div class="rating-big">{{ restaurant()!.averageRating || 0 | number: '1.1-1' }}</div>
+            <div class="rating-details">
+              <div class="stars">
+                @for (star of getStarArray(restaurant()!.averageRating || 0); track $index) {
+                  <mat-icon [class.filled]="star === 1">star</mat-icon>
+                }
+              </div>
+              <span class="rating-text">
+                Based on {{ restaurant()!.totalReviews }} review{{ restaurant()!.totalReviews! > 1 ? 's' : '' }}
+              </span>
             </div>
-            <span class="rating-text">
-              {{ restaurant()!.averageRating || 0 | number: '1.1-1' }} out of 5 ({{ restaurant()!.totalReviews }} reviews)
-            </span>
           </div>
         }
-        
+
         @if (restaurant()!.description) {
           <p class="description">{{ restaurant()!.description }}</p>
         }
@@ -55,7 +60,7 @@
               <p>{{ restaurant()!.address || restaurant()!.location || 'Not available' }}</p>
             </div>
           </div>
-          
+
           @if (restaurant()!.phone) {
             <div class="info-item">
               <mat-icon>phone</mat-icon>
@@ -65,7 +70,7 @@
               </div>
             </div>
           }
-          
+
           @if (restaurant()!.website) {
             <div class="info-item">
               <mat-icon>language</mat-icon>
@@ -79,12 +84,42 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- Photo Gallery -->
+    @if (reviewPhotos().length > 0) {
+      <div class="photo-gallery-section">
+        <h2>
+          <mat-icon>photo_library</mat-icon>
+          Photos from Reviews
+        </h2>
+        <div class="photo-grid">
+          @for (photo of reviewPhotos(); track photo) {
+            <div class="photo-thumb" (click)="openPhoto(photo)">
+              <img [src]="photo" alt="Review photo" />
+              <div class="photo-overlay">
+                <mat-icon>zoom_in</mat-icon>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Photo Lightbox -->
+    @if (selectedPhoto()) {
+      <div class="photo-lightbox" (click)="closePhoto()">
+        <button mat-icon-button class="close-lightbox" (click)="closePhoto()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <img [src]="selectedPhoto()" alt="Review photo enlarged" />
+      </div>
+    }
+
     <div class="reviews-section">
       <div class="reviews-header">
         <h2>Reviews ({{ reviews().length }})</h2>
-        <button mat-raised-button color="primary" (click)="toggleReviewForm()">
+        <button mat-raised-button color="primary" class="write-review-btn" (click)="toggleReviewForm()">
           <mat-icon>rate_review</mat-icon>
-          Write a Review
+          {{ showReviewForm() ? 'Cancel' : 'Write a Review' }}
         </button>
       </div>
 
@@ -111,46 +146,44 @@
                 <div class="review-header-content">
                   <div class="user-info">
                     <div class="avatar">
-                      @if (review.userAvatar) {
-                        <img [src]="review.userAvatar" [alt]="review.username || 'User'" />
-                      } @else {
-                        <mat-icon>account_circle</mat-icon>
-                      }
+                      <mat-icon>account_circle</mat-icon>
                     </div>
                     <div>
-                      <strong>{{ review.username || 'Anonymous' }}</strong>
-                      @if (review.createdAt) {
-                        <p class="review-date">{{ formatDate(review.createdAt) }}</p>
+                      <strong>{{ review.username || review.user_id.substring(0, 8) || 'Anonymous' }}</strong>
+                      @if (review.created_at || review.createdAt) {
+                        <p class="review-date">{{ formatDate(review.created_at || review.createdAt) }}</p>
                       }
                     </div>
                   </div>
-                  
-                  <div class="stars small">
-                    @for (star of getStarArray(review.rating); track $index) {
-                      <mat-icon [class.filled]="star === 1">star</mat-icon>
-                    }
+
+                  <div class="review-rating">
+                    <div class="stars small">
+                      @for (star of getStarArray(review.rating); track $index) {
+                        <mat-icon [class.filled]="star === 1">star</mat-icon>
+                      }
+                    </div>
                   </div>
                 </div>
               </mat-card-header>
-              
+
               <mat-card-content>
-                @if (review.title) {
-                  <h3>{{ review.title }}</h3>
-                }
-                <p class="review-content">{{ review.content }}</p>
-                @if (review.visitDate) {
-                  <p class="visit-date">Visited on {{ formatDate(review.visitDate) }}</p>
+                <p class="review-text">{{ review.content }}</p>
+
+                @if (review.photo_url) {
+                  <div class="review-photo" (click)="openPhoto(review.photo_url)">
+                    <img [src]="review.photo_url" alt="Review photo" />
+                  </div>
                 }
               </mat-card-content>
-              
-              <mat-card-actions>
-                @if (review.helpfulCount !== undefined) {
-                  <button mat-button>
-                    <mat-icon>thumb_up</mat-icon>
-                    Helpful ({{ review.helpfulCount }})
+
+              @if (review.user_id === authService.currentUser()?.id) {
+                <mat-card-actions>
+                  <button mat-button color="warn" (click)="deleteReview(review)">
+                    <mat-icon>delete</mat-icon>
+                    Delete
                   </button>
-                }
-              </mat-card-actions>
+                </mat-card-actions>
+              }
             </mat-card>
           }
         </div>

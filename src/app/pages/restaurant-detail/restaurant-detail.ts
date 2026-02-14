@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 import { Restaurant, Review, CreateReviewRequest } from '../../core/models/restaurant.model';
 import { RestaurantService } from '../../core/services/restaurant.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -24,6 +25,7 @@ import { ReviewForm } from '../../shared/components/review-form/review-form';
     MatDividerModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatDialogModule,
     ReviewForm
   ],
   templateUrl: './restaurant-detail.html',
@@ -35,6 +37,14 @@ export class RestaurantDetail implements OnInit {
   isLoading = signal(true);
   showReviewForm = signal(false);
   restaurantId = signal<string>('');
+  selectedPhoto = signal<string | null>(null);
+
+  reviewPhotos = computed(() => {
+    return this.reviews()
+      .filter(r => r.photo_url)
+      .map(r => r.photo_url!)
+      .slice(0, 6);
+  });
 
   constructor(
     private route: ActivatedRoute,
@@ -74,8 +84,8 @@ export class RestaurantDetail implements OnInit {
     this.restaurantService.getReviewsByRestaurantId(id).subscribe({
       next: (reviews) => {
         this.reviews.set(reviews.sort((a, b) => {
-          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
           return dateB - dateA;
         }));
       }
@@ -87,8 +97,8 @@ export class RestaurantDetail implements OnInit {
       this.snackBar.open('Please log in to write a review', 'Login', {
         duration: 3000
       }).onAction().subscribe(() => {
-        this.router.navigate(['/login'], { 
-          queryParams: { returnUrl: this.router.url } 
+        this.router.navigate(['/login'], {
+          queryParams: { returnUrl: this.router.url }
         });
       });
       return;
@@ -101,12 +111,11 @@ export class RestaurantDetail implements OnInit {
       next: (review) => {
         this.reviews.set([review, ...this.reviews()]);
         this.showReviewForm.set(false);
-        
-        // Reload restaurant to get updated rating
+
         if (this.restaurant()) {
           this.loadRestaurant(this.restaurant()!.id);
         }
-        
+
         this.snackBar.open('Review posted successfully!', 'Close', {
           duration: 3000
         });
@@ -119,6 +128,29 @@ export class RestaurantDetail implements OnInit {
     });
   }
 
+  openPhoto(url: string): void {
+    this.selectedPhoto.set(url);
+  }
+
+  closePhoto(): void {
+    this.selectedPhoto.set(null);
+  }
+
+  deleteReview(review: Review): void {
+    if (!confirm('Are you sure you want to delete this review?')) return;
+
+    this.restaurantService.deleteReview(review.id, this.restaurantId()).subscribe({
+      next: () => {
+        this.reviews.set(this.reviews().filter(r => r.id !== review.id));
+        this.loadRestaurant(this.restaurantId());
+        this.snackBar.open('Review deleted', 'Close', { duration: 3000 });
+      },
+      error: () => {
+        this.snackBar.open('Failed to delete review', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
   getPriceRange(priceRange: number): string {
     return '$'.repeat(priceRange);
   }
@@ -127,7 +159,7 @@ export class RestaurantDetail implements OnInit {
     return Array(5).fill(0).map((_, i) => i < Math.round(rating) ? 1 : 0);
   }
 
-  formatDate(date: Date | undefined): string {
+  formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',

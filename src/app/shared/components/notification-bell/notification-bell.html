@@ -1,0 +1,61 @@
+@if (authService.isAuthenticated()) {
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="notifMenu"
+    class="notif-trigger"
+    (menuOpened)="onMenuOpen()"
+  >
+    @if (notificationService.unreadCount() > 0) {
+      <mat-icon
+        [matBadge]="notificationService.unreadCount()"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+      >notifications</mat-icon>
+    } @else {
+      <mat-icon>notifications_none</mat-icon>
+    }
+  </button>
+
+  <mat-menu #notifMenu="matMenu" class="notification-menu">
+    <div class="notif-header" (click)="$event.stopPropagation()">
+      <strong>Notifications</strong>
+      @if (notificationService.unreadCount() > 0) {
+        <button mat-button class="mark-all-btn" (click)="markAllAsRead()">
+          Mark all read
+        </button>
+      }
+    </div>
+    <mat-divider></mat-divider>
+
+    @if (notificationService.notifications().length === 0) {
+      <div class="notif-empty" (click)="$event.stopPropagation()">
+        <mat-icon>notifications_off</mat-icon>
+        <p>No notifications yet</p>
+      </div>
+    } @else {
+      @for (notif of notificationService.notifications(); track notif.id) {
+        <button
+          mat-menu-item
+          class="notif-item"
+          [class.unread]="!notif.read"
+          (click)="markAsRead(notif)"
+        >
+          <div class="notif-content">
+            <mat-icon class="notif-icon" [class.unread-icon]="!notif.read">
+              {{ notif.read ? 'notifications_none' : 'notifications_active' }}
+            </mat-icon>
+            <div class="notif-text">
+              <span class="notif-message">{{ notif.message }}</span>
+              @if (notif.created_at) {
+                <span class="notif-time">{{ getTimeAgo(notif.created_at) }}</span>
+              }
+            </div>
+            @if (!notif.read) {
+              <div class="unread-dot"></div>
+            }
+          </div>
+        </button>
+      }
+    }
+  </mat-menu>
+}

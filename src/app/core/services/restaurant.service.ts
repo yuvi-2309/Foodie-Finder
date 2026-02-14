@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap, catchError, throwError, map } from 'rxjs';
-import { Restaurant, Review, CreateReviewRequest } from '../models/restaurant.model';
+import { Restaurant, Review, CreateReviewRequest, CreateRestaurantRequest, RestaurantSearchResponse, SearchParams } from '../models/restaurant.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -12,6 +12,7 @@ export class RestaurantService {
 
     restaurants = signal<Restaurant[]>([]);
     reviews = signal<Review[]>([]);
+    searchResults = signal<RestaurantSearchResponse[]>([]);
 
     constructor(private http: HttpClient) {
         this.loadRestaurants();
@@ -27,20 +28,15 @@ export class RestaurantService {
     getRestaurants(): Observable<Restaurant[]> {
         return this.http.get<any>(`${this.apiUrl}/restaurants/`).pipe(
             map(response => {
-                console.log('Raw API response:', response);
                 const restaurants = response.value || response || [];
-                console.log('Extracted restaurants:', restaurants);
                 return restaurants;
             }),
             map(restaurants => {
-                // Calculate average rating and total reviews from reviews array
-                const processedRestaurants = restaurants.map((restaurant: Restaurant) => ({
+                return restaurants.map((restaurant: Restaurant) => ({
                     ...restaurant,
                     averageRating: this.calculateAverageRating(restaurant.reviews || []),
                     totalReviews: (restaurant.reviews || []).length
                 }));
-                console.log('Processed restaurants:', processedRestaurants);
-                return processedRestaurants;
             }),
             tap(restaurants => {
                 this.restaurants.set(restaurants);
@@ -52,22 +48,59 @@ export class RestaurantService {
         );
     }
 
+    searchRestaurants(params: SearchParams): Observable<RestaurantSearchResponse[]> {
+        let httpParams = new HttpParams();
+        if (params.query) httpParams = httpParams.set('query', params.query);
+        if (params.min_rating) httpParams = httpParams.set('min_rating', params.min_rating.toString());
+        if (params.sort_by) httpParams = httpParams.set('sort_by', params.sort_by);
+        if (params.order) httpParams = httpParams.set('order', params.order);
+
+        return this.http.get<RestaurantSearchResponse[]>(`${this.apiUrl}/restaurants/search`, { params: httpParams }).pipe(
+            tap(results => this.searchResults.set(results)),
+            catchError(error => {
+                console.error('Error searching restaurants:', error);
+                return throwError(() => new Error('Failed to search restaurants'));
+            })
+        );
+    }
+
+    getRecommendations(): Observable<RestaurantSearchResponse[]> {
+        return this.http.get<RestaurantSearchResponse[]>(`${this.apiUrl}/restaurants/recommendations`).pipe(
+            catchError(error => {
+                console.error('Error fetching recommendations:', error);
+                return throwError(() => new Error('Failed to load recommendations'));
+            })
+        );
+    }
+
+    createRestaurant(request: CreateRestaurantRequest): Observable<Restaurant> {
+        return this.http.post<Restaurant>(`${this.apiUrl}/restaurants/`, request).pipe(
+            tap(restaurant => {
+                const current = this.restaurants();
+                this.restaurants.set([...current, restaurant]);
+            }),
+            catchError(error => {
+                console.error('Error creating restaurant:', error);
+                return throwError(() => new Error(error.error?.detail || 'Failed to create restaurant'));
+            })
+        );
+    }
+
     getRestaurantById(id: string): Observable<Restaurant> {
         return this.http.get<Restaurant>(`${this.apiUrl}/restaurants/${id}`).pipe(
-            tap(restaurant => {
-                // Calculate average rating and total reviews
-                const processedRestaurant = {
+            map(restaurant => {
+                return {
                     ...restaurant,
                     averageRating: this.calculateAverageRating(restaurant.reviews || []),
                     totalReviews: (restaurant.reviews || []).length
                 };
-
-                // Update restaurants signal
+            }),
+            tap(restaurant => {
                 const currentRestaurants = this.restaurants();
-                const index = currentRestaurants.findIndex(r => r.id === id);
+                const index = currentRestaurants.findIndex(r => r.id === restaurant.id);
                 if (index !== -1) {
                     const updated = [...currentRestaurants];
-                    updated[index] = processedRestaurant;
+                    updated[index] = restaurant;
                     this.restaurants.set(updated);
                 }
             }),
@@ -79,7 +112,6 @@ export class RestaurantService {
     }
 
     getReviewsByRestaurantId(restaurantId: string): Observable<Review[]> {
-        // Reviews come with restaurant details in the API
         return this.getRestaurantById(restaurantId).pipe(
             map(restaurant => restaurant.reviews || []),
             tap(reviews => {
@@ -93,14 +125,10 @@ export class RestaurantService {
     }
 
     createReview(request: CreateReviewRequest): Observable<Review> {
-        console.log('RestaurantService.createReview - request:', request);
         return this.http.post<Review>(`${this.apiUrl}/reviews/`, request).pipe(
             tap(review => {
-                // Add new review to current reviews
                 const currentReviews = this.reviews();
                 this.reviews.set([...currentReviews, review]);
-
-                // Refresh restaurant data to get updated ratings
                 this.getRestaurantById(request.restaurant_id).subscribe();
             }),
             catchError(error => {
@@ -113,7 +141,6 @@ export class RestaurantService {
     updateReview(reviewId: string, request: CreateReviewRequest): Observable<Review> {
         return this.http.put<Review>(`${this.apiUrl}/reviews/${reviewId}`, request).pipe(
             tap(() => {
-                // Refresh restaurant data
                 this.getRestaurantById(request.restaurant_id).subscribe();
             }),
             catchError(error => {
@@ -126,11 +153,8 @@ export class RestaurantService {
     deleteReview(reviewId: string, restaurantId: string): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/reviews/${reviewId}`).pipe(
             tap(() => {
-                // Remove review from current reviews
                 const currentReviews = this.reviews();
                 this.reviews.set(currentReviews.filter(r => r.id !== reviewId));
-
-                // Refresh restaurant data
                 this.getRestaurantById(restaurantId).subscribe();
             }),
             catchError(error => {

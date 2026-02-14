@@ -4,21 +4,25 @@
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a237e 0%, #3949ab 50%, #5c6bc0 100%);
 }
 
 .register-card {
-  max-width: 500px;
+  max-width: 480px;
   width: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+  border-radius: 20px !important;
+  padding: 8px;
+
   mat-card-header {
     margin-bottom: 24px;
-    
+    text-align: center;
+
     h1 {
       margin: 0;
       font-size: 28px;
-      font-weight: 600;
+      font-weight: 800;
+      color: #1a237e;
     }
   }
 
@@ -36,7 +40,9 @@
   height: 48px;
   font-size: 16px;
   margin-top: 8px;
-  
+  border-radius: 24px !important;
+  font-weight: 700;
+
   mat-spinner {
     display: inline-block;
     margin-right: 8px;
@@ -51,9 +57,9 @@
   margin-bottom: 16px;
   background-color: #ffebee;
   color: #c62828;
-  border-radius: 4px;
+  border-radius: 12px;
   border-left: 4px solid #c62828;
-  
+
   mat-icon {
     font-size: 20px;
     width: 20px;
@@ -67,7 +73,7 @@
   justify-content: center;
   margin-top: 16px;
   gap: 4px;
-  
+
   span {
     color: rgba(0, 0, 0, 0.6);
   }

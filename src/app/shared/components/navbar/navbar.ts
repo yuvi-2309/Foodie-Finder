@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationBell } from '../notification-bell/notification-bell';
 
 @Component({
   selector: 'app-navbar',
@@ -17,7 +18,8 @@ import { AuthService } from '../../../core/services/auth.service';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatDividerModule
+    MatDividerModule,
+    NotificationBell
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
@@ -33,11 +35,7 @@ export class Navbar {
   }
 
   navigateToHome(): void {
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/restaurants']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.router.navigate(['/restaurants']);
   }
 }
 

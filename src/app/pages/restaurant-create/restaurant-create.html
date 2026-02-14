@@ -1,0 +1,61 @@
+<div class="create-restaurant-page">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>Add a Restaurant</h1>
+      <p>Share a new restaurant with the FoodieFinder community</p>
+    </div>
+  </div>
+
+  <div class="form-container">
+    <mat-card class="create-card">
+      <mat-card-content>
+        <form [formGroup]="restaurantForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Restaurant Name</mat-label>
+            <input matInput formControlName="name" placeholder="e.g. Saravana Bhavan" />
+            <mat-icon matPrefix>restaurant</mat-icon>
+            @if (getErrorMessage('name')) {
+              <mat-error>{{ getErrorMessage('name') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>City / Location</mat-label>
+            <input matInput formControlName="location" placeholder="e.g. Chennai" />
+            <mat-icon matPrefix>location_city</mat-icon>
+            @if (getErrorMessage('location')) {
+              <mat-error>{{ getErrorMessage('location') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Address (optional)</mat-label>
+            <textarea matInput formControlName="address" rows="2"
+              placeholder="e.g. 123 Anna Salai, T. Nagar"></textarea>
+            <mat-icon matPrefix>place</mat-icon>
+            @if (getErrorMessage('address')) {
+              <mat-error>{{ getErrorMessage('address') }}</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-actions">
+            @if (isSubmitting()) {
+              <button mat-raised-button color="primary" type="submit" disabled class="submit-btn">
+                <mat-icon class="spin">sync</mat-icon>
+                Creating...
+              </button>
+            } @else {
+              <button mat-raised-button color="primary" type="submit" class="submit-btn">
+                <mat-icon>add_business</mat-icon>
+                Create Restaurant
+              </button>
+            }
+            <button mat-stroked-button type="button" routerLink="/restaurants" class="cancel-btn">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -6,16 +6,28 @@
     </div>
 
     <div class="nav-actions">
+      <button mat-button routerLink="/restaurants" class="nav-link">
+        <mat-icon>explore</mat-icon>
+        <span>Restaurants</span>
+      </button>
+
       @if (authService.isAuthenticated()) {
-        <button mat-button routerLink="/restaurants">
-          <mat-icon>explore</mat-icon>
-          <span>Restaurants</span>
+        <button mat-button routerLink="/restaurants/new" class="nav-link">
+          <mat-icon>add_business</mat-icon>
+          <span>Add Restaurant</span>
         </button>
-        
+
+        <button mat-button routerLink="/recommendations" class="nav-link">
+          <mat-icon>auto_awesome</mat-icon>
+          <span>For You</span>
+        </button>
+
+        <app-notification-bell></app-notification-bell>
+
         <button mat-icon-button [matMenuTriggerFor]="menu" class="user-menu">
           <mat-icon>account_circle</mat-icon>
         </button>
-        
+
         <mat-menu #menu="matMenu">
           <div class="user-info">
             @if (authService.currentUser()?.displayName) {
@@ -30,8 +42,7 @@
           </button>
         </mat-menu>
       } @else {
-        <button mat-button routerLink="/login">
-          <mat-icon>login</mat-icon>
+        <button mat-raised-button routerLink="/login" class="register-button">
           <span>Login</span>
         </button>
         <button mat-raised-button routerLink="/register" class="register-button">

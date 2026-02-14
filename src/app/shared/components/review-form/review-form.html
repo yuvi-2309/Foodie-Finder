@@ -8,7 +8,7 @@
     <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()">
       <div class="rating-input">
         <label>Your Rating *</label>
-        <div 
+        <div
           class="stars"
           (mouseleave)="clearHoverRating()"
         >
@@ -34,7 +34,7 @@
         <textarea
           matInput
           formControlName="content"
-          rows="6"
+          rows="5"
           placeholder="What did you love? What could be better? Help others by sharing your experience..."
         ></textarea>
         @if (getErrorMessage('content')) {
@@ -42,14 +42,45 @@
         }
       </mat-form-field>
 
+      <!-- Photo Upload Section -->
+      <div class="photo-section">
+        <label class="photo-label">
+          <mat-icon>add_a_photo</mat-icon>
+          Add a Photo (optional)
+        </label>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Photo URL</mat-label>
+          <input
+            matInput
+            formControlName="photo_url"
+            placeholder="https://example.com/photo.jpg"
+            (input)="onPhotoUrlChange()"
+          />
+          <mat-icon matSuffix>link</mat-icon>
+        </mat-form-field>
+
+        @if (photoPreview()) {
+          <div class="photo-preview">
+            <img [src]="photoPreview()" alt="Photo preview" />
+            <button mat-icon-button class="remove-photo" (click)="clearPhoto()" type="button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+
       <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting()">
-          @if (isSubmitting()) {
-            <span>Submitting...</span>
-          } @else {
-            <span>Submit Review</span>
-          }
-        </button>
+        @if (isSubmitting()) {
+          <button mat-raised-button color="primary" type="submit" disabled>
+            <mat-icon class="spin">sync</mat-icon>
+            Submitting...
+          </button>
+        } @else {
+          <button mat-raised-button color="primary" type="submit">
+            <mat-icon>send</mat-icon>
+            Submit Review
+          </button>
+        }
       </div>
     </form>
   </mat-card-content>
