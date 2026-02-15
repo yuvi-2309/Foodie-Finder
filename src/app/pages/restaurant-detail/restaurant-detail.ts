@@ -4,13 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog';
 import { Restaurant, Review, CreateReviewRequest } from '../../core/models/restaurant.model';
 import { RestaurantService } from '../../core/services/restaurant.service';
+import { getRestaurantImage } from '../../core/utils/restaurant-image.util';
 import { AuthService } from '../../core/services/auth.service';
 import { ReviewForm } from '../../shared/components/review-form/review-form';
 
@@ -21,17 +19,15 @@ import { ReviewForm } from '../../shared/components/review-form/review-form';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
-    MatDividerModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDialogModule,
     ReviewForm
   ],
   templateUrl: './restaurant-detail.html',
   styleUrl: './restaurant-detail.scss',
 })
 export class RestaurantDetail implements OnInit {
+  getRestaurantImage = getRestaurantImage;
   restaurant = signal<Restaurant | null>(null);
   reviews = signal<Review[]>([]);
   isLoading = signal(true);

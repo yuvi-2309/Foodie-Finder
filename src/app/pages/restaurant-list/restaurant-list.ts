@@ -16,6 +16,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RestaurantSearchResponse, SearchParams } from '../../core/models/restaurant.model';
 import { RestaurantService } from '../../core/services/restaurant.service';
+import { getRestaurantImage } from '../../core/utils/restaurant-image.util';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
@@ -40,6 +41,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
   styleUrl: './restaurant-list.scss',
 })
 export class RestaurantList implements OnInit {
+  getRestaurantImage = getRestaurantImage;
   allRestaurants = signal<RestaurantSearchResponse[]>([]);
   searchResults = signal<RestaurantSearchResponse[]>([]);
   isLoading = signal(true);

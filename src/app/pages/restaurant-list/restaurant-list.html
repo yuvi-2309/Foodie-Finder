@@ -122,7 +122,7 @@
         <div class="restaurants-grid">
           @for (result of searchResults(); track result.id) {
             <mat-card class="restaurant-card" (click)="viewRestaurant(result.id)">
-              <div class="restaurant-image" [style.background-image]="'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800)'">
+              <div class="restaurant-image" [style.background-image]="'url(' + getRestaurantImage(result.name) + ')'">
               </div>
 
               <mat-card-content>
@@ -164,7 +164,7 @@
       <div class="restaurants-grid">
         @for (restaurant of allRestaurants(); track restaurant.id) {
           <mat-card class="restaurant-card" (click)="viewRestaurant(restaurant.id)">
-            <div class="restaurant-image" [style.background-image]="'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800)'">
+            <div class="restaurant-image" [style.background-image]="'url(' + getRestaurantImage(restaurant.name) + ')'">
             </div>
 
             <mat-card-content>

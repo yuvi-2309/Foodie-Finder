@@ -45,7 +45,7 @@
       @for (restaurant of recommendations(); track restaurant.id; let i = $index) {
         <mat-card class="recommendation-card" (click)="viewRestaurant(restaurant.id)">
           <div class="card-rank">#{{ i + 1 }}</div>
-          <div class="card-image" [style.background-image]="'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800)'">
+          <div class="card-image" [style.background-image]="'url(' + getRestaurantImage(restaurant.name) + ')'">
             <div class="card-overlay">
               <mat-icon>restaurant</mat-icon>
             </div>

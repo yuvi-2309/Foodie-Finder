@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { RestaurantSearchResponse } from '../../core/models/restaurant.model';
 import { RestaurantService } from '../../core/services/restaurant.service';
+import { getRestaurantImage } from '../../core/utils/restaurant-image.util';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -24,6 +25,7 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './recommendations.scss',
 })
 export class Recommendations implements OnInit {
+  getRestaurantImage = getRestaurantImage;
   recommendations = signal<RestaurantSearchResponse[]>([]);
   isLoading = signal(true);
   error = signal<string | null>(null);
