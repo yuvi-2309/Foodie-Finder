@@ -6,7 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateReviewRequest } from '../../../core/models/restaurant.model';
+import { CloudinaryService } from '../../../core/services/cloudinary.service';
 
 @Component({
   selector: 'app-review-form',
@@ -17,7 +20,9 @@ import { CreateReviewRequest } from '../../../core/models/restaurant.model';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressBarModule,
+    MatSnackBarModule
   ],
   templateUrl: './review-form.html',
   styleUrl: './review-form.scss',
@@ -31,11 +36,16 @@ export class ReviewForm {
   hoverRating = signal(0);
   isSubmitting = signal(false);
   photoPreview = signal<string | null>(null);
+  uploadedPhotoUrl = signal<string | null>(null);
+  uploadError = signal<string | null>(null);
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    public cloudinaryService: CloudinaryService,
+    private snackBar: MatSnackBar
+  ) {
     this.reviewForm = this.fb.group({
-      content: ['', [Validators.required, Validators.minLength(20)]],
-      photo_url: ['']
+      content: ['', [Validators.required, Validators.minLength(20)]]
     });
   }
 
@@ -56,18 +66,49 @@ export class ReviewForm {
     return index < displayRating ? 'star' : 'star_border';
   }
 
-  onPhotoUrlChange(): void {
-    const url = this.reviewForm.get('photo_url')?.value;
-    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-      this.photoPreview.set(url);
-    } else {
-      this.photoPreview.set(null);
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const validationError = this.cloudinaryService.validateFile(file);
+
+    if (validationError) {
+      this.uploadError.set(validationError);
+      this.snackBar.open(validationError, 'Close', { duration: 4000 });
+      input.value = '';
+      return;
     }
+
+    this.uploadError.set(null);
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.photoPreview.set(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to Cloudinary
+    this.cloudinaryService.uploadImage(file).subscribe({
+      next: (secureUrl) => {
+        this.uploadedPhotoUrl.set(secureUrl);
+        this.photoPreview.set(secureUrl);
+        this.snackBar.open('Photo uploaded successfully!', 'Close', { duration: 2000 });
+      },
+      error: (error) => {
+        this.uploadError.set(error.message);
+        this.photoPreview.set(null);
+        this.uploadedPhotoUrl.set(null);
+        this.snackBar.open(error.message, 'Close', { duration: 4000 });
+      }
+    });
   }
 
   clearPhoto(): void {
-    this.reviewForm.patchValue({ photo_url: '' });
     this.photoPreview.set(null);
+    this.uploadedPhotoUrl.set(null);
+    this.uploadError.set(null);
   }
 
   onSubmit(): void {
@@ -84,7 +125,7 @@ export class ReviewForm {
       content: this.reviewForm.value.content
     };
 
-    const photoUrl = this.reviewForm.value.photo_url?.trim();
+    const photoUrl = this.uploadedPhotoUrl();
     if (photoUrl) {
       request.photo_url = photoUrl;
     }
@@ -97,6 +138,8 @@ export class ReviewForm {
     this.selectedRating.set(0);
     this.isSubmitting.set(false);
     this.photoPreview.set(null);
+    this.uploadedPhotoUrl.set(null);
+    this.uploadError.set(null);
   }
 
   getErrorMessage(fieldName: string): string {

@@ -6,18 +6,18 @@
     </div>
 
     <div class="nav-actions">
-      <button mat-button routerLink="/restaurants" class="nav-link">
+      <button mat-raised-button routerLink="/restaurants" class="nav-link">
         <mat-icon>explore</mat-icon>
         <span>Restaurants</span>
       </button>
 
       @if (authService.isAuthenticated()) {
-        <button mat-button routerLink="/restaurants/new" class="nav-link">
+        <button mat-raised-button routerLink="/restaurants/new" class="nav-link">
           <mat-icon>add_business</mat-icon>
           <span>Add Restaurant</span>
         </button>
 
-        <button mat-button routerLink="/recommendations" class="nav-link">
+        <button mat-raised-button routerLink="/recommendations" class="nav-link">
           <mat-icon>auto_awesome</mat-icon>
           <span>For You</span>
         </button>

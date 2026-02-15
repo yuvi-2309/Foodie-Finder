@@ -5,14 +5,9 @@
     class="notif-trigger"
     (menuOpened)="onMenuOpen()"
   >
-    @if (notificationService.unreadCount() > 0) {
-      <mat-icon
-        [matBadge]="notificationService.unreadCount()"
-        matBadgeColor="warn"
-        matBadgeSize="small"
-      >notifications</mat-icon>
-    } @else {
-      <mat-icon>notifications_none</mat-icon>
+    <mat-icon>notifications</mat-icon>
+    @if (notificationService.hasNew()) {
+      <span class="new-dot"></span>
     }
   </button>
 

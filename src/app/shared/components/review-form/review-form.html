@@ -48,18 +48,44 @@
           <mat-icon>add_a_photo</mat-icon>
           Add a Photo (optional)
         </label>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Photo URL</mat-label>
-          <input
-            matInput
-            formControlName="photo_url"
-            placeholder="https://example.com/photo.jpg"
-            (input)="onPhotoUrlChange()"
-          />
-          <mat-icon matSuffix>link</mat-icon>
-        </mat-form-field>
 
-        @if (photoPreview()) {
+        @if (!photoPreview() && !cloudinaryService.isUploading()) {
+          <div class="upload-area">
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              (change)="onFileSelected($event)"
+              #fileInput
+              hidden
+            />
+            <button
+              mat-stroked-button
+              type="button"
+              class="upload-btn"
+              (click)="fileInput.click()"
+            >
+              <mat-icon>cloud_upload</mat-icon>
+              Choose Image
+            </button>
+            <span class="upload-hint">JPEG, PNG, GIF, or WebP (max 5MB)</span>
+          </div>
+        }
+
+        @if (cloudinaryService.isUploading()) {
+          <div class="upload-progress">
+            <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+            <span class="upload-status">Uploading image...</span>
+          </div>
+        }
+
+        @if (uploadError()) {
+          <div class="upload-error">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ uploadError() }}</span>
+          </div>
+        }
+
+        @if (photoPreview() && !cloudinaryService.isUploading()) {
           <div class="photo-preview">
             <img [src]="photoPreview()" alt="Photo preview" />
             <button mat-icon-button class="remove-photo" (click)="clearPhoto()" type="button">

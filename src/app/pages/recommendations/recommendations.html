@@ -23,6 +23,11 @@
           <mat-icon>login</mat-icon>
           Sign In
         </button>
+      } @else {
+        <button mat-raised-button color="primary" (click)="viewRestaurant('')">
+          <mat-icon>explore</mat-icon>
+          Browse Restaurants
+        </button>
       }
     </div>
   } @else if (recommendations().length === 0) {

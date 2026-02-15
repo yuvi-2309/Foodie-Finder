@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap, catchError, throwError, map } from 'rxjs';
-import { Restaurant, Review, CreateReviewRequest, CreateRestaurantRequest, RestaurantSearchResponse, SearchParams } from '../models/restaurant.model';
+import { Restaurant, Review, CreateReviewRequest, CreateRestaurantRequest, RestaurantSearchResponse, RestaurantDetailResponse, SearchParams } from '../models/restaurant.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -19,10 +19,20 @@ export class RestaurantService {
     }
 
     private loadRestaurants(): void {
-        this.getRestaurants().subscribe({
-            next: (restaurants) => this.restaurants.set(restaurants),
+        this.getAllRestaurants().subscribe({
+            next: (results) => this.searchResults.set(results),
             error: (error) => console.error('Failed to load restaurants:', error)
         });
+    }
+
+    getAllRestaurants(): Observable<RestaurantSearchResponse[]> {
+        return this.http.get<RestaurantSearchResponse[]>(`${this.apiUrl}/restaurants/search`).pipe(
+            tap(results => this.searchResults.set(results)),
+            catchError(error => {
+                console.error('Error fetching restaurants:', error);
+                return throwError(() => new Error('Failed to load restaurants'));
+            })
+        );
     }
 
     getRestaurants(): Observable<Restaurant[]> {
@@ -87,12 +97,15 @@ export class RestaurantService {
     }
 
     getRestaurantById(id: string): Observable<Restaurant> {
-        return this.http.get<Restaurant>(`${this.apiUrl}/restaurants/${id}`).pipe(
-            map(restaurant => {
+        return this.http.get<RestaurantDetailResponse>(`${this.apiUrl}/restaurants/${id}`).pipe(
+            map(response => {
+                const restaurant = response.restaurant;
+                const reviews = response.reviews || [];
                 return {
                     ...restaurant,
-                    averageRating: this.calculateAverageRating(restaurant.reviews || []),
-                    totalReviews: (restaurant.reviews || []).length
+                    reviews,
+                    averageRating: response.average_rating ?? this.calculateAverageRating(reviews),
+                    totalReviews: reviews.length
                 };
             }),
             tap(restaurant => {

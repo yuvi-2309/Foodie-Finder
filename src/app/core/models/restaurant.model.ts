@@ -63,6 +63,12 @@ export interface SearchParams {
   order?: 'asc' | 'desc';
 }
 
+export interface RestaurantDetailResponse {
+  restaurant: Restaurant;
+  average_rating: number | null;
+  reviews: Review[];
+}
+
 export interface Notification {
   id: string;
   user_id: string;

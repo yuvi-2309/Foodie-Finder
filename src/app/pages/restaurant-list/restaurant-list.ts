@@ -14,7 +14,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Restaurant, RestaurantSearchResponse, SearchParams } from '../../core/models/restaurant.model';
+import { RestaurantSearchResponse, SearchParams } from '../../core/models/restaurant.model';
 import { RestaurantService } from '../../core/services/restaurant.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -40,7 +40,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
   styleUrl: './restaurant-list.scss',
 })
 export class RestaurantList implements OnInit {
-  restaurants = signal<Restaurant[]>([]);
+  allRestaurants = signal<RestaurantSearchResponse[]>([]);
   searchResults = signal<RestaurantSearchResponse[]>([]);
   isLoading = signal(true);
   isSearching = signal(false);
@@ -85,9 +85,9 @@ export class RestaurantList implements OnInit {
 
   private loadRestaurants(): void {
     this.isLoading.set(true);
-    this.restaurantService.getRestaurants().subscribe({
-      next: (restaurants) => {
-        this.restaurants.set(restaurants);
+    this.restaurantService.getAllRestaurants().subscribe({
+      next: (results) => {
+        this.allRestaurants.set(results);
         this.isLoading.set(false);
       },
       error: () => {

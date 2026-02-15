@@ -47,18 +47,27 @@ export class Recommendations implements OnInit {
     this.isLoading.set(true);
     this.restaurantService.getRecommendations().subscribe({
       next: (recommendations) => {
-        this.recommendations.set(recommendations);
+        if (Array.isArray(recommendations) && recommendations.length > 0) {
+          this.recommendations.set(recommendations);
+        } else {
+          this.recommendations.set([]);
+        }
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.error.set('Unable to load recommendations. Try reviewing some restaurants first!');
+        // Backend returns 500 when user has no reviews yet
+        this.error.set('Start reviewing restaurants to get personalized recommendations!');
         this.isLoading.set(false);
       }
     });
   }
 
   viewRestaurant(id: string): void {
-    this.router.navigate(['/restaurants', id]);
+    if (id) {
+      this.router.navigate(['/restaurants', id]);
+    } else {
+      this.router.navigate(['/restaurants']);
+    }
   }
 
   goToLogin(): void {
