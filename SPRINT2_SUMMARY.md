@@ -182,7 +182,13 @@
 3. Try uploading an image larger than 5MB
 4. Verify error message: "File size exceeds 5MB..."
 
-## Running the Application
+## Deployment
+
+- **Frontend:** Vercel — https://foodie-finder-7wx2.vercel.app
+- **Backend:** Render — https://foodiefinder-backend-8ybs.onrender.com
+- **Build Output:** `dist/foodie-finder/browser` (static SPA)
+
+## Running Locally
 
 ```bash
 # Install dependencies

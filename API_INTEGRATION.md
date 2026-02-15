@@ -8,7 +8,10 @@ Successfully integrated the FoodieFinder backend API (https://foodiefinder-backe
 - **Backend:** FastAPI, SQLAlchemy ORM, PostgreSQL (Neon)
 - **Authentication:** JWT Bearer Tokens
 - **Image Hosting:** Cloudinary (frontend direct upload)
-- **Deployment:** Render (backend), Neon PostgreSQL (database)
+- **Deployment:**
+  - Frontend: Vercel — https://foodie-finder-7wx2.vercel.app
+  - Backend: Render — https://foodiefinder-backend-8ybs.onrender.com
+  - Database: Neon PostgreSQL
 
 ## Changes Made
 

@@ -2,6 +2,11 @@
 
 A modern, community-driven Angular application for restaurant reviews and ratings built with Angular 20 and Angular Material, integrated with a FastAPI backend, Cloudinary image hosting, and real-time notifications.
 
+## Live Demo
+
+- **Frontend:** https://foodie-finder-7wx2.vercel.app
+- **Backend API:** https://foodiefinder-backend-8ybs.onrender.com
+
 ## Sprint 1 Features (COMPLETED)
 
 ### 1. User Registration & Authentication
@@ -138,6 +143,13 @@ Navigate to http://localhost:4200/
 - Reactive Forms
 - Cloudinary (Image CDN)
 - JWT Authentication
+
+## Deployment
+
+- **Frontend:** Deployed on [Vercel](https://vercel.com) — https://foodie-finder-7wx2.vercel.app
+- **Backend:** Deployed on [Render](https://render.com) — https://foodiefinder-backend-8ybs.onrender.com
+- **Database:** Neon PostgreSQL
+- **Image CDN:** Cloudinary
 
 ## Project Structure
 ```
